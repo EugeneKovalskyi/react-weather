@@ -11,9 +11,12 @@ function Forecast() {
     e.preventDefault()
 
     fetch(
-      `api.openweathermap.org/data/2.5/weather?units=${unit}&q=${city}&appid=e27a751a6ee7a8994bf39a684cebc190`
+      `https://api.openweathermap.org/data/2.5/weather?units=${unit}&q=${city}&appid=e27a751a6ee7a8994bf39a684cebc190`
     )
-      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response)
+        return response.json()
+      })
       .then((response) => {
         setResponseObj(response)
       })
