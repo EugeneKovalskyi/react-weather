@@ -6,22 +6,35 @@ function Forecast() {
   const [responseObj, setResponseObj] = useState({})
   let [city, setCity] = useState('')
   let [unit, setUnit] = useState('metric')
+  let [error, setError] = useState(false)
+  let [loading, setLoading] = useState(false)
 
   function getForecast(e) {
     e.preventDefault()
 
+    if (city.length === 0) {
+      return setError(true)
+    }
+
+    setResponseObj({})
+    setError(false)
+    setLoading(true)
+
     fetch(
-      `https://api.openweathermap.org/data/2.5/weather?units=${unit}&q=${city}&appid=e27a751a6ee7a8994bf39a684cebc190`
+      `https://api.openweathermap.org/data/2.5/weather?units=${unit}&q=${city}&appid=${process.env.REACT_APP_API_KEY}`
     )
+      .then((response) => response.json())
       .then((response) => {
-        // console.log(response)
-        return response.json()
-      })
-      .then((response) => {
+        if (response.cod !== 200) {
+          throw new Error()
+        }
+        setLoading(false)
         setResponseObj(response)
       })
       .catch((error) => {
-        console.error(error)
+        setLoading(false)
+        setError(true)
+        console.error(error.message)
       })
   }
 
@@ -65,7 +78,7 @@ function Forecast() {
         </button>
       </form>
       <hr />
-      <Conditions responseObj={responseObj} />
+      <Conditions responseObj={responseObj} error={error} loading={loading} />
     </div>
   )
 }
